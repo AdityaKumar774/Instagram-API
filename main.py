@@ -18,6 +18,7 @@ if user_details['meta']['code'] == 200:
     print ('This image has: ' + str(likes) + ' likes')
     comments = user_details['data'][0]['comments']['count']
     print ('This image has: ' + str(comments) + ' comments')
-    urllib.urlretrieve(image_url)
+    urllib.urlretrieve(image_url, 'a.jpg')
+    print 'The image has been downloaded with name a.jpg'
 else:
     print ('No User Found')
