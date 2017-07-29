@@ -1,25 +1,37 @@
 import requests
 import urllib
 
-url = 'https://api.instagram.com/v1/users/1472346217/media/recent/?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'
-user_details = requests.get(url)
-scope = 'public_content'
-user_details = (user_details.json())
-# print (user_details)
-if user_details['meta']['code'] == 200:
-    user_name = user_details['data'][0]['user']['full_name']
-    print('User Name is: ' + user_name)
-    user_id = user_details['data'][0]['user']['id']
-    print('User Id is: ' + user_id)
-    media_id = user_details['data'][0]['id']
-    print ('Recent Post\'s id: ' + media_id)
-    image_url = user_details['data'][0]['images']['standard_resolution']['url']
-    print ('Url of first post: ' + image_url)
-    likes = user_details['data'][0]['likes']['count']
-    print ('This image has: ' + str(likes) + ' likes')
-    comments = user_details['data'][0]['comments']['count']
-    print ('This image has: ' + str(comments) + ' comments')
-    urllib.urlretrieve(image_url, 'a.jpg')
-    print 'The image has been downloaded with name a.jpg'
+self_url = 'https://api.instagram.com/v1/users/self/?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'
+self_details = requests.get(self_url)
+self_details = (self_details.json())
+# print self_details
+if self_details['meta']['code'] == 200:
+    my_user_id = self_details['data']['id']
+    print ('My user id is: ' + my_user_id)
+    my_full_name = self_details['data']['full_name']
+    print ('My full name is: ' + my_full_name)
+    my_profile_pic = self_details['data']['profile_picture']
+    print ('Url of my profile picture is: ' + my_profile_pic)
+    my_bio = self_details['data']['bio']
+    print ('My bio is: ' + my_bio)
+    my_website = self_details['data']['website']
+    print ('My website is: ' + my_website)
+    my_posts = self_details['data']['counts']['media']
+    print ('I have ' + str(my_posts) + ' posts')
+    my_followers = self_details['data']['counts']['followed_by']
+    print (str(my_followers) + ' people follow me on Instagram')
+    i_follow = self_details['data']['counts']['follows']
+    print ('I follow ' + str(i_follow) + ' people on Instagram')
 else:
-    print ('No User Found')
+    print 'Something went wrong, contact administrator for support'
+
+other_user_name = raw_input('\nEnter the username which you want to search: \n')
+user_url = 'https://api.instagram.com/v1/users/search?q=' + other_user_name + '&access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'
+other_user_details = requests.get(user_url)
+other_user_details = (other_user_details.json())
+print other_user_details
+if other_user_details['meta']['code'] == 200:
+    other_user_user_id = other_user_details['data'][0]['id']
+    print ('User\'s user is is: ' + str(other_user_user_id))
+else:
+    print 'User does not exist'
