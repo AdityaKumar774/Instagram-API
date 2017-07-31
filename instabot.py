@@ -24,11 +24,11 @@ getSelfDetails()
 
 
 # function to get other user's user id
-def getUserId(user_name):
-    url = BASE_URL + 'users/search?q=' + user_name + '&access_token=' + ACCESS_TOKEN
+def getUserId(userName):
+    url = BASE_URL + 'users/search?q=' + userName + '&access_token=' + ACCESS_TOKEN
     info = requests.get(url)
     info = info.json()
-    if info['meta']['data'] == 200:
+    if info['meta']['code'] == 200:
         if len(info['data']):
             return info['data'][0]['id']
         else:
@@ -40,13 +40,12 @@ def getUserId(user_name):
 
 
 def getUserDetail():
-    userName = raw_input('\nEnter User name to check: \n')
-    userId = getUserId()
+    userName = raw_input('\nEnter User name: \n')
+    userId = getUserId(userName)
     url = BASE_URL + 'users/' + str(userId) + '/?access_token=' + ACCESS_TOKEN
     info = requests.get(url)
     info = info.json()
-    print info;
-    print 'User\'s user name is: ' + info['data'][0]['username']
+    print 'User\'s user name is: ' + info['data']['username']
     print 'User\'s user id is: ' + info['data']['id']
     print 'User is followed by: ' + str(info['data']['counts']['followed_by']) + ' people'
     print 'User follows: ' + str(info['data']['counts']['follows']) + ' people'
@@ -55,7 +54,7 @@ def getUserDetail():
 
 # function to get other user recent post id
 def getUserPost(userId):
-    url = BASE_URL + 'media/' + str(userId) + '/media/recent/?access_token=' + ACCESS_TOKEN
+    url = BASE_URL + 'users/' + str(userId) + '/media/recent/?access_token=' + ACCESS_TOKEN
     info = requests.get(url)
     info = info.json()
     if info['meta']['code'] == 200:
@@ -85,12 +84,12 @@ def getUserPostContent(postId):
 # function to like user's recent post
 def likeUserPost(postId):
     data = {
-        'access_toke': ACCESS_TOKEN
+        'access_token': ACCESS_TOKEN
     }
     url = BASE_URL + 'media/' + str(postId) + '/likes'
     info = requests.post(url, data)
     info = info.json()
-    if info['meta']['data'] == 200:
+    if info['meta']['code'] == 200:
         print 'Post Liked!'
 
 
@@ -101,7 +100,7 @@ def commentUserPost(postId):
         'text': 'Awesome'
     }
     url = BASE_URL + 'media/' + str(postId) + '/comments'
-    info = requests.post(url)
+    info = requests.post(url, data)
     info = info.json()
     if info['meta']['code'] == 200:
         print 'Comment on post is: ' + str(data['text'])
