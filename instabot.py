@@ -23,6 +23,22 @@ def getSelfDetails():
 getSelfDetails()
 
 
+# function to get my public posts
+def myPublicPosts():
+    url = BASE_URL + 'users/self/media/recent/?access_token=' + ACCESS_TOKEN
+    my_post = requests.get(url)
+    my_post = my_post.json()
+    if my_post['meta']['code'] == 200:
+        # print my_post
+        # print 'My recent post\'s url is: ' + my_post['data'][0]['images']['standard_resolution']['url']
+        urlretrieve(my_post['data'][0]['images']['standard_resolution']['url'], 'my_recent_post.jpg')
+        print 'My recent post has been downloaded by the name my_recent_post.jpg'
+        print 'My recent post\'s id is: ' + my_post['data'][0]['id']
+
+
+myPublicPosts()
+
+
 # function to get other user's user id
 def getUserId(userName):
     url = BASE_URL + 'users/search?q=' + userName + '&access_token=' + ACCESS_TOKEN
@@ -104,6 +120,7 @@ def commentUserPost(postId):
     info = info.json()
     if info['meta']['code'] == 200:
         print 'Comment on post is: ' + str(data['text'])
+
 
 # calling of the main function
 getUserDetail()
