@@ -1,77 +1,110 @@
+from API_access_token import ACCESS_TOKEN
+
 import requests
-import urllib
+from urllib import urlretrieve
 
-self_url = 'https://api.instagram.com/v1/users/self/?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'
-self_details = requests.get(self_url)
-self_details = (self_details.json())
-# print self_details
-if self_details['meta']['code'] == 200:
-    my_user_id = self_details['data']['id']
-    print ('My user id is: ' + my_user_id)
-    my_full_name = self_details['data']['full_name']
-    print ('My full name is: ' + my_full_name)
-    my_profile_pic = self_details['data']['profile_picture']
-    print ('Url of my profile picture is: ' + my_profile_pic)
-    my_bio = self_details['data']['bio']
-    print ('My bio is: ' + my_bio)
-    my_website = self_details['data']['website']
-    print ('My website is: ' + my_website)
-    my_posts = self_details['data']['counts']['media']
-    print ('I have ' + str(my_posts) + ' posts')
-    my_followers = self_details['data']['counts']['followed_by']
-    print (str(my_followers) + ' people follow me on Instagram')
-    i_follow = self_details['data']['counts']['follows']
-    print ('I follow ' + str(i_follow) + ' people on Instagram\n')
-else:
-    print 'Something went wrong, contact administrator for support'
+BASE_URL = "https://api.instagram.com/v1/"
 
-my_url = 'https://api.instagram.com/v1/users/' + my_user_id + '/media/recent/?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'
-my_details = requests.get(my_url)
-my_details = (my_details.json())
-# print my_details
-if my_details['meta']['code'] == 200:
-    my_recent_post_id = my_details['data'][0]['id']
-    print ('My recent post\'s id is: ' + str(my_recent_post_id))
-    my_recent_post_url = my_details['data'][0]['images']['standard_resolution']['url']
-    print ('Url of my recent post is: ' + my_recent_post_url)
-    urllib.urlretrieve(my_recent_post_url, 'recent_post_pic.jpg')
-    print 'The image has been downloaded with name recent_post_pic.jpg'
-else:
-    print 'Something went terribly wrong, contact administrator for support'
 
-other_user_name = raw_input('\nEnter the username which you want to search: \n')
-user_url = 'https://api.instagram.com/v1/users/search?q=' + other_user_name + '&access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'
-other_user_details = requests.get(user_url)
-other_user_details = (other_user_details.json())
-# print other_user_details
-if other_user_details['meta']['code'] == 200:
-    other_user_user_id = other_user_details['data'][0]['id']
-    print ('User\'s user id is: ' + str(other_user_user_id))
-else:
-    print 'User does not exist'
+# function for getting self details
+def getSelfDetails():
+    url = BASE_URL + 'users/self/?access_token=' + ACCESS_TOKEN
+    my_info = requests.get(url)
+    my_info = my_info.json()
+    if my_info['meta']['code'] == 200:
+        print 'My user name is: ' + my_info['data']['username']
+        print 'My user id is: ' + my_info['data']['id']
+        print 'My name is: ' + my_info['data']['full_name']
+        print 'I have ' + str(my_info['data']['counts']['media']) + ' posts'
+        print str(my_info['data']['counts']['followed_by']) + ' people follow me on Instagram'
+        print 'I follow ' + str(my_info['data']['counts']['follows']) + ' people on Instagram'
 
-other_user_post_url = 'https://api.instagram.com/v1/users/' + other_user_user_id + '/media/recent/?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'
-other_user_posts = requests.get(other_user_post_url)
-other_user_posts = (other_user_posts.json())
-# print other_user_posts
-if other_user_posts['meta']['code'] == 200:
-    other_user_post_id = other_user_posts['data'][0]['id']
-    print ('Id of recent post is: ' + other_user_post_id)
-    other_user_recent_post_url = other_user_posts['data'][0]['images']['standard_resolution']['url']
-    print ('Url of most recent post of user is: ' + other_user_recent_post_url)
-    urllib.urlretrieve(other_user_recent_post_url, 'other_user_recent_post.jpg')
-    print ('The most recent post of user with user id has been downloaded by name other_user_recent_post.jpg')
-    likes_on_post = other_user_posts['data'][0]['likes']['count']
-    print ('Likes on this post is: ' + str(likes_on_post))
-    requests.post(
-        'https://api.instagram.com/v1/media/' + other_user_post_id + '/likes?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'.format(
-            other_user_post_id), other_user_details)
-    print 'You Liked this post!'
-    comment_text = {'access_token': '1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38',
-                    'text': 'Awesome'
-                    }
-    requests.post('https://api.instagram.com/v1/media/' + other_user_post_id + '/comments', comment_text)
-    print 'You Commented on this post'
 
-    comments_on_post = other_user_posts['data'][0]['comments']['count']
-    print ('User has ' + str(comments_on_post) + ' comments on this post')
+getSelfDetails()
+
+
+# function to get other user's user id
+def getUserId(user_name):
+    url = BASE_URL + 'users/search?q=' + user_name + '&access_token=' + ACCESS_TOKEN
+    info = requests.get(url)
+    info = info.json()
+    if info['meta']['data'] == 200:
+        if len(info['data']):
+            return info['data'][0]['id']
+        else:
+            print 'User does not exist'
+            return 'none'
+    else:
+        print 'Status code other than 200 received\n'
+        return 'none'
+
+
+def getUserDetail():
+    userName = raw_input('\nEnter User name to check: \n')
+    userId = getUserId()
+    url = BASE_URL + 'users/' + str(userId) + '/?access_token=' + ACCESS_TOKEN
+    info = requests.get(url)
+    info = info.json()
+    print info;
+    print 'User\'s user name is: ' + info['data'][0]['username']
+    print 'User\'s user id is: ' + info['data']['id']
+    print 'User is followed by: ' + str(info['data']['counts']['followed_by']) + ' people'
+    print 'User follows: ' + str(info['data']['counts']['follows']) + ' people'
+    getUserPost(userId)
+
+
+# function to get other user recent post id
+def getUserPost(userId):
+    url = BASE_URL + 'media/' + str(userId) + '/media/recent/?access_token=' + ACCESS_TOKEN
+    info = requests.get(url)
+    info = info.json()
+    if info['meta']['code'] == 200:
+        postId = info['data'][0]['id']
+        print 'Recent post\'s id is: ' + str(postId)
+        getUserPostContent(postId)
+        likeUserPost(postId)
+        commentUserPost(postId)
+
+
+# function to get user's recent post content
+def getUserPostContent(postId):
+    url = BASE_URL + 'media/' + str(postId) + '?access_token=' + ACCESS_TOKEN
+    info = requests.get(url)
+    info = info.json()
+    if info['meta']['code'] == 200:
+        if info['data']['type'] == 'image':
+            mediaUrl = info['data']['images']['standard_resolution']['url']
+            urlretrieve(mediaUrl, 'image.jpg')
+            print 'The recent post has been downloaded by the name image.jpg'
+        elif info['data']['type'] == 'video':
+            mediaUrl = info['data']['videos']['standard_resolution']['url']
+            urlretrieve(mediaUrl, 'a.mp4')
+            print 'The video has been downloaded by the name a.mp4'
+
+
+# function to like user's recent post
+def likeUserPost(postId):
+    data = {
+        'access_toke': ACCESS_TOKEN
+    }
+    url = BASE_URL + 'media/' + str(postId) + '/likes'
+    info = requests.post(url, data)
+    info = info.json()
+    if info['meta']['data'] == 200:
+        print 'Post Liked!'
+
+
+# function to comment on the post
+def commentUserPost(postId):
+    data = {
+        'access_token': ACCESS_TOKEN,
+        'text': 'Awesome'
+    }
+    url = BASE_URL + 'media/' + str(postId) + '/comments'
+    info = requests.post(url)
+    info = info.json()
+    if info['meta']['code'] == 200:
+        print 'Comment on post is: ' + str(data['text'])
+
+# calling of the main function
+getUserDetail()
