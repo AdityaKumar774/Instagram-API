@@ -3,6 +3,8 @@ from API_access_token import ACCESS_TOKEN
 import requests
 from urllib import urlretrieve
 
+# import matplotlib
+
 BASE_URL = "https://api.instagram.com/v1/"
 
 
@@ -31,9 +33,9 @@ def myPublicPosts():
     if my_post['meta']['code'] == 200:
         # print my_post
         # print 'My recent post\'s url is: ' + my_post['data'][0]['images']['standard_resolution']['url']
+        print 'My recent post\'s id is: ' + my_post['data'][0]['id']
         urlretrieve(my_post['data'][0]['images']['standard_resolution']['url'], 'my_recent_post.jpg')
         print 'My recent post has been downloaded by the name my_recent_post.jpg'
-        print 'My recent post\'s id is: ' + my_post['data'][0]['id']
 
 
 myPublicPosts()
@@ -61,10 +63,8 @@ def getUserDetail():
     url = BASE_URL + 'users/' + str(userId) + '/?access_token=' + ACCESS_TOKEN
     info = requests.get(url)
     info = info.json()
-    print 'User\'s user name is: ' + info['data']['username']
+    print 'User\'s name is: ' + info['data']['full_name']
     print 'User\'s user id is: ' + info['data']['id']
-    print 'User is followed by: ' + str(info['data']['counts']['followed_by']) + ' people'
-    print 'User follows: ' + str(info['data']['counts']['follows']) + ' people'
     getUserPost(userId)
 
 
@@ -107,20 +107,37 @@ def likeUserPost(postId):
     info = info.json()
     if info['meta']['code'] == 200:
         print 'Post Liked!'
+    else:
+        print 'Something went Wrong'
 
 
 # function to comment on the post
 def commentUserPost(postId):
+    comment_text = raw_input('\nEnter the text which you want to comment to the post\n')
     data = {
         'access_token': ACCESS_TOKEN,
-        'text': 'Awesome'
+        'text': comment_text
     }
     url = BASE_URL + 'media/' + str(postId) + '/comments'
     info = requests.post(url, data)
     info = info.json()
     if info['meta']['code'] == 200:
         print 'Comment on post is: ' + str(data['text'])
+    else:
+        print 'Something went Wrong'
 
 
 # calling of the main function
 getUserDetail()
+
+
+# function to get all the comments on a post
+def commentUserPost(postId):
+    get_comment = BASE_URL + 'media/' + str(getUserPostContent(postId)) + '/comments?access_token' + ACCESS_TOKEN
+    comment_info = requests.get(get_comment)
+    comment_info = comment_info.json()
+    if comment_info['meta']['code'] == 200:
+        comments = comment_info['data']
+        print comments
+getUserDetail()
+
