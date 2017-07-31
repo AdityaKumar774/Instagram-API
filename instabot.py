@@ -63,9 +63,15 @@ if other_user_posts['meta']['code'] == 200:
     print ('The most recent post of user with user id has been downloaded by name other_user_recent_post.jpg')
     likes_on_post = other_user_posts['data'][0]['likes']['count']
     print ('Likes on this post is: ' + str(likes_on_post))
-    requests.post('https://api.instagram.com/v1/media/' + other_user_post_id + '/likes?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'.format(other_user_post_id), other_user_details)
+    requests.post(
+        'https://api.instagram.com/v1/media/' + other_user_post_id + '/likes?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'.format(
+            other_user_post_id), other_user_details)
     print 'You Liked this post!'
+    comment_text = {'access_token': '1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38',
+                    'text': 'Awesome'
+                    }
+    requests.post('https://api.instagram.com/v1/media/' + other_user_post_id + '/comments', comment_text)
+    print 'You Commented on this post'
+
     comments_on_post = other_user_posts['data'][0]['comments']['count']
     print ('User has ' + str(comments_on_post) + ' comments on this post')
-    requests.post('https://api.instagram.com/v1/media/' + other_user_post_id + '/comments/text=awesome?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'.format(other_user_post_id), other_user_details)
-    print 'You Commented on this post'
