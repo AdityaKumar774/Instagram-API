@@ -55,13 +55,17 @@ other_user_posts = requests.get(other_user_post_url)
 other_user_posts = (other_user_posts.json())
 # print other_user_posts
 if other_user_posts['meta']['code'] == 200:
+    other_user_post_id = other_user_posts['data'][0]['id']
+    print ('Id of recent post is: ' + other_user_post_id)
     other_user_recent_post_url = other_user_posts['data'][0]['images']['standard_resolution']['url']
     print ('Url of most recent post of user is: ' + other_user_recent_post_url)
     urllib.urlretrieve(other_user_recent_post_url, 'other_user_recent_post.jpg')
     print ('The most recent post of user with user id has been downloaded by name other_user_recent_post.jpg')
-    ask_user = raw_input('\nChose from below, which post you want to view: \n1. Post with minimum number of likes\n2. A particular caption\n3. Exit\n')
-    if ask_user == 3:
-        print 'Bye, thanks for using InstaBot'
-    elif ask_user == 1:
-        min_likes = other_user_posts['data'][0]['likes']['count']
-        print ('Likes on this post is: ' + str(min_likes))
+    likes_on_post = other_user_posts['data'][0]['likes']['count']
+    print ('Likes on this post is: ' + str(likes_on_post))
+    requests.post('https://api.instagram.com/v1/media/' + other_user_post_id + '/likes?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'.format(other_user_post_id), other_user_details)
+    print 'You Liked this post!'
+    comments_on_post = other_user_posts['data'][0]['comments']['count']
+    print ('User has ' + str(comments_on_post) + ' comments on this post')
+    requests.post('https://api.instagram.com/v1/media/' + other_user_post_id + '/comments/text=awesome?access_token=1545666056.98346f2.38c9a48c189d43dd88ffe4b45bbd9d38'.format(other_user_post_id), other_user_details)
+    print 'You Commented on this post'
