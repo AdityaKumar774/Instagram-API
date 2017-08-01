@@ -20,6 +20,8 @@ def getSelfDetails():
         print 'I have ' + str(my_info['data']['counts']['media']) + ' posts'
         print str(my_info['data']['counts']['followed_by']) + ' people follow me on Instagram'
         print 'I follow ' + str(my_info['data']['counts']['follows']) + ' people on Instagram'
+    else:
+        'Code other than 200 received'
 
 
 getSelfDetails()
@@ -36,6 +38,7 @@ def myPublicPosts():
         print 'My recent post\'s id is: ' + my_post['data'][0]['id']
         urlretrieve(my_post['data'][0]['images']['standard_resolution']['url'], 'my_recent_post.jpg')
         print 'My recent post has been downloaded by the name my_recent_post.jpg'
+
     def recentLikedPost():
         media_url = BASE_URL + 'users/self/media/liked?access_token=' + ACCESS_TOKEN
         liked_post = requests.get(media_url)
@@ -44,7 +47,8 @@ def myPublicPosts():
             print 'Recent liked post\'s id is: ' + liked_post['data'][0]['id']
             print 'This post belongs to: ' + liked_post['data'][0]['user']['full_name']
         else:
-            print 'No response Recieved from server side'
+            print 'No response received from server side'
+
     recentLikedPost()
 
 
@@ -68,7 +72,7 @@ def getUserId(userName):
 
 
 def getUserDetail():
-    userName = raw_input('\nEnter User name: \n')
+    userName = raw_input('\nEnter User name which you want to search: \n')
     userId = getUserId(userName)
     url = BASE_URL + 'users/' + str(userId) + '/?access_token=' + ACCESS_TOKEN
     info = requests.get(url)
@@ -89,6 +93,8 @@ def getUserPost(userId):
         getUserPostContent(postId)
         likeUserPost(postId)
         commentUserPost(postId)
+    else:
+        print 'Code other than 200 received'
 
 
 # function to get user's recent post content
@@ -105,6 +111,8 @@ def getUserPostContent(postId):
             mediaUrl = info['data']['videos']['standard_resolution']['url']
             urlretrieve(mediaUrl, 'a.mp4')
             print 'The video has been downloaded by the name a.mp4'
+    else:
+        print 'Code other than 200 received'
 
 
 # function to like user's recent post
@@ -118,7 +126,7 @@ def likeUserPost(postId):
     if info['meta']['code'] == 200:
         print 'Post Liked!'
     else:
-        print 'Something went Wrong'
+        print 'Code other than 200 received'
 
 
 # function to comment on the post
@@ -140,7 +148,7 @@ def commentUserPost(postId):
             comments = comment_info['data']
             print comments
     else:
-        print 'Something went Wrong'
+        print 'Code other than 200 received'
 
 
 # calling of the main function
@@ -156,6 +164,8 @@ def popularTags():
     if info['meta']['code'] == 200:
         print info['data'][0]['id']
         print info['data'][1]['id']
+    else:
+        print 'Code other than 200 received'
 
 
 # calling of function
