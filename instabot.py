@@ -145,3 +145,18 @@ def commentUserPost(postId):
 
 # calling of the main function
 getUserDetail()
+
+
+# function to get media post by the popular hash tags
+def popularTags():
+    tag_name = raw_input('\nEnter the popular tag you want to search for:\n')
+    url = BASE_URL + 'tags/' + tag_name + '/media/recent?access_token=' + ACCESS_TOKEN
+    info = requests.get(url)
+    info = info.json()
+    if info['meta']['code'] == 200:
+        print info['data'][0]['id']
+        print info['data'][1]['id']
+
+
+# calling of function
+popularTags()
