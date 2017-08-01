@@ -36,6 +36,16 @@ def myPublicPosts():
         print 'My recent post\'s id is: ' + my_post['data'][0]['id']
         urlretrieve(my_post['data'][0]['images']['standard_resolution']['url'], 'my_recent_post.jpg')
         print 'My recent post has been downloaded by the name my_recent_post.jpg'
+    def recentLikedPost():
+        media_url = BASE_URL + 'users/self/media/liked?access_token=' + ACCESS_TOKEN
+        liked_post = requests.get(media_url)
+        liked_post = liked_post.json()
+        if liked_post['meta']['code'] == 200:
+            print 'Recent liked post\'s id is: ' + liked_post['data'][0]['id']
+            print 'This post belongs to: ' + liked_post['data'][0]['user']['full_name']
+        else:
+            print 'No response Recieved from server side'
+    recentLikedPost()
 
 
 myPublicPosts()
@@ -123,21 +133,15 @@ def commentUserPost(postId):
     info = info.json()
     if info['meta']['code'] == 200:
         print 'Comment on post is: ' + str(data['text'])
+        get_comment = BASE_URL + 'media/' + str(postId) + '/comments?access_token' + ACCESS_TOKEN
+        comment_info = requests.get(get_comment)
+        comment_info = comment_info.json()
+        if comment_info['meta']['code'] == 200:
+            comments = comment_info['data']
+            print comments
     else:
         print 'Something went Wrong'
 
 
 # calling of the main function
 getUserDetail()
-
-
-# function to get all the comments on a post
-def commentUserPost(postId):
-    get_comment = BASE_URL + 'media/' + str(getUserPostContent(postId)) + '/comments?access_token' + ACCESS_TOKEN
-    comment_info = requests.get(get_comment)
-    comment_info = comment_info.json()
-    if comment_info['meta']['code'] == 200:
-        comments = comment_info['data']
-        print comments
-getUserDetail()
-
