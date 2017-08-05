@@ -21,7 +21,7 @@ def getSelfDetails():
         print str(my_info['data']['counts']['followed_by']) + ' people follow me on Instagram'
         print 'I follow ' + str(my_info['data']['counts']['follows']) + ' people on Instagram'
     else:
-        'Code other than 200 received'
+        print 'Code other than 200 received'
 
 
 getSelfDetails()
@@ -128,10 +128,25 @@ def likeUserPost(postId):
     else:
         print 'Code other than 200 received'
 
+    # function to get media post by the popular hash tags
+    def popularTags():
+        tag_name = raw_input('\nEnter the popular tag you want to search for:\n')
+        url = BASE_URL + 'tags/' + tag_name + '?access_token=' + ACCESS_TOKEN
+        info = requests.get(url)
+        info = info.json()
+        if info['meta']['code'] == 200:
+            info['data']['name'] == '#' + tag_name
+            print 'Total number of tags by this name is: ' + str(info['data']['media_count'])
+        else:
+            print 'Code other than 200 received'
+
+    # calling of function
+    popularTags()
+
 
 # function to comment on the post
 def commentUserPost(postId):
-    comment_text = raw_input('\nEnter the text which you want to comment to the post\n')
+    comment_text = raw_input('\nEnter the text which you want to comment to the user\'s post\n')
     data = {
         'access_token': ACCESS_TOKEN,
         'text': comment_text
@@ -153,20 +168,3 @@ def commentUserPost(postId):
 
 # calling of the main function
 getUserDetail()
-
-
-# function to get media post by the popular hash tags
-def popularTags():
-    tag_name = raw_input('\nEnter the popular tag you want to search for:\n')
-    url = BASE_URL + 'tags/' + tag_name + '/media/recent?access_token=' + ACCESS_TOKEN
-    info = requests.get(url)
-    info = info.json()
-    if info['meta']['code'] == 200:
-        print info['data'][0]['id']
-        print info['data'][1]['id']
-    else:
-        print 'Code other than 200 received'
-
-
-# calling of function
-popularTags()
